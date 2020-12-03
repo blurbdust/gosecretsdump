@@ -28,7 +28,7 @@ func New(bootkey, system, ntds string) (DitReader, error) {
 		outputFileName:     "",
 		justUser:           "",
 		printUserStatus:    false,
-		systembootKey:		bootkey,
+		systemBootKey:		bootkey,
 		systemHiveLocation: system,
 		ntdsFileLocation:   ntds,
 		//db:                 esent.Esedb{}.Init(ntds),
@@ -108,10 +108,10 @@ func (d DitReader) Dump() error {
 			d.noLMHash = ls.HasNoLMHashPolicy()
 		}
 	} else if d.systemBootKey != "" {
-		d.bootKey = DecodeString(d.systemBootKey)
-		d.noLMHash = ls.HasNoLMHashPolicy()
+		d.bootKey, _ = hex.DecodeString(d.systemBootKey)
+		d.noLMHash = false
 	} else {
-		return fmt.Errorf("System hive empty")
+		return fmt.Errorf("System hive empty, and no bootkey provided")
 	}
 
 
