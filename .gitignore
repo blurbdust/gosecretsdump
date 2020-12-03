@@ -1,4 +1,5 @@
 /.vscode
+/.idea
 /impacket*
 test.txt
 /test/Big/*

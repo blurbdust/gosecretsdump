@@ -18,6 +18,7 @@ type Dumper interface {
 
 type Settings struct {
 	SystemLoc   string
+	BootKey		string
 	NTDSLoc     string
 	SAMLoc      string
 	LiveSAM     bool
@@ -33,7 +34,7 @@ func GoSecretsDump(s Settings) error {
 	var dr Dumper
 	var err error
 	if s.NTDSLoc != "" {
-		dr, err = ditreader.New(s.SystemLoc, s.NTDSLoc)
+		dr, err = ditreader.New(s.BootKey, s.SystemLoc, s.NTDSLoc)
 		if err != nil {
 			return err
 		}
@@ -46,7 +47,7 @@ func GoSecretsDump(s Settings) error {
 		}
 	}
 
-	if s.LiveSAM {
+	if s.LiveSAM == true {
 		dr, err = samreader.NewLive()
 		if err != nil {
 			return err

@@ -20,7 +20,8 @@ func main() {
 	var vers bool
 	flag.StringVar(&s.Outfile, "out", "", "Location to export output")
 	flag.StringVar(&s.NTDSLoc, "ntds", "", "Location of the NTDS file (required)")
-	flag.StringVar(&s.SystemLoc, "system", "", "Location of the SYSTEM file (required)")
+	flag.StringVar(&s.SystemLoc, "system", "", "Location of the SYSTEM file")
+	flag.StringVar(&s.BootKey, "bootkey", "", "Provide just the bootkey")
 	flag.StringVar(&s.SAMLoc, "sam", "", "Location of SAM registry hive")
 	flag.BoolVar(&s.LiveSAM, "livesam", false, "Get hashes from live system. Only works on local machine hashes (SAM), only works on Windows.")
 	flag.BoolVar(&s.Status, "status", false, "Include status in hash output")
@@ -31,10 +32,10 @@ func main() {
 	flag.BoolVar(&s.History, "history", false, "Include Password History")
 	flag.Parse()
 
-	if vers {
+	if vers == true {
 		os.Exit(0)
 	}
-	if s.SystemLoc == "" && (s.NTDSLoc == "" && s.SAMLoc == "") && !s.LiveSAM {
+	if (s.SystemLoc == "" && s.BootKey == "") && (s.NTDSLoc == "" && s.SAMLoc == "") && !s.LiveSAM {
 		flag.Usage()
 		os.Exit(1)
 	}

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/md5"
 	"crypto/rc4"
+	"encoding/hex"
 	"fmt"
 	"os"
 	"sync"
@@ -14,7 +15,7 @@ import (
 )
 
 //New Creates a new dit dumper
-func New(system, ntds string) (DitReader, error) {
+func New(bootkey, system, ntds string) (DitReader, error) {
 	r := DitReader{
 		isRemote:           false,
 		history:            false,
@@ -27,6 +28,7 @@ func New(system, ntds string) (DitReader, error) {
 		outputFileName:     "",
 		justUser:           "",
 		printUserStatus:    false,
+		systembootKey:		bootkey,
 		systemHiveLocation: system,
 		ntdsFileLocation:   ntds,
 		//db:                 esent.Esedb{}.Init(ntds),
@@ -60,6 +62,7 @@ type DitReader struct {
 	pwdLastSet         bool
 	resumeSession      string
 	outputFileName     string
+	systemBootKey	   string
 	systemHiveLocation string
 	ntdsFileLocation   string
 
@@ -104,9 +107,13 @@ func (d DitReader) Dump() error {
 		if d.ntdsFileLocation != "" {
 			d.noLMHash = ls.HasNoLMHashPolicy()
 		}
+	} else if d.systemBootKey != "" {
+		d.bootKey = DecodeString(d.systemBootKey)
+		d.noLMHash = ls.HasNoLMHashPolicy()
 	} else {
 		return fmt.Errorf("System hive empty")
 	}
+
 
 	d.getPek()
 	if len(d.pek) < 1 {
